@@ -45,14 +45,10 @@ pub fn sys_get_time(ts: *mut TimeVal, _tz: usize) -> isize {
 /// YOUR JOB: Finish sys_task_info to pass testcases
 pub fn sys_task_info(ti: *mut TaskInfo) -> isize {
     let current_task = get_current_task();
-    let mut res:[u32; MAX_SYSCALL_NUM] = [0; MAX_SYSCALL_NUM];
-    for (syscall_id, count) in current_task.syscall_times {
-        res[syscall_id] = count;
-    }
     unsafe {
         *ti = TaskInfo {
             status: current_task.task_status,
-            syscall_times: res,
+            syscall_times: current_task.syscall_times,
             time: get_time_ms() - current_task.exec_start_time
         };
     }

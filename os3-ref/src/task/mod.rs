@@ -61,7 +61,7 @@ lazy_static! {
                         task_cx: TaskContext::zero_init(),
                         task_status: TaskStatus::UnInit,
                         exec_start_time: 0,
-                        syscall_times: BTreeMap::new(),
+                        syscall_times: [0; MAX_SYSCALL_NUM],
                     });
             count -= 1;
         }
@@ -158,11 +158,7 @@ impl TaskManager {
         let mut inner = self.inner.exclusive_access();
         let current_index = inner.current_task;
         let current_task =  &mut inner.tasks[current_index];
-        if let Some(value) = current_task.syscall_times.get_mut(&syscall_id) {
-            (*value) += 1;
-        } else {
-            current_task.syscall_times.insert(syscall_id, 1);
-        }
+        current_task.syscall_times[syscall_id] += 1;
     }
 
     fn get_current_task(&self) -> TaskControlBlock {
